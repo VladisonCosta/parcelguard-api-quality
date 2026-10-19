@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/parcelguard/scan-result.v1.schema.json",
+  "title": "ParcelGuard Scan Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "tracking_id", "status", "version", "replayed"],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 6, "maxLength": 64},
+    "tracking_id": {"type": "string", "pattern": "^PG-[0-9]{6,}$"},
+    "status": {"type": "string", "enum": ["PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED"]},
+    "version": {"type": "integer", "minimum": 1},
+    "replayed": {"type": "boolean"}
+  }
+}

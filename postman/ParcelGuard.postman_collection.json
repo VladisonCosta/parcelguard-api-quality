@@ -1,0 +1,41 @@
+{
+  "info": {
+    "name": "ParcelGuard | API Smoke (local)",
+    "description": "Manual smoke collection. Set baseUrl = http://localhost:8001. Uses only fictitious data.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8001"},
+    {"key": "accessToken", "value": ""},
+    {"key": "trackingId", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "Health", "request": {"method": "GET", "url": "{{baseUrl}}/health"},
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Healthy service', () => pm.response.to.have.status(200));"]}}]
+    },
+    {
+      "name": "Login operator", "request": {
+        "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode":"raw","raw":"{\"email\":\"operator@parcelguard.local\",\"password\":\"demo1234\"}"},
+        "url": "{{baseUrl}}/v1/auth/login"
+      },
+      "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": ["pm.test('Login succeeded', () => pm.response.to.have.status(200));", "pm.collectionVariables.set('accessToken', pm.response.json().access_token);"]}}]
+    },
+    {
+      "name": "Create shipment", "request": {
+        "method":"POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{accessToken}}"}],
+        "body": {"mode":"raw","raw":"{\"customer_email\":\"ana@parcelguard.local\",\"destination\":\"Rua de Exemplo 100, Recife\",\"service_level\":\"EXPRESS\"}"},
+        "url":"{{baseUrl}}/v1/shipments"
+      },
+      "event": [{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Created', () => pm.response.to.have.status(201));","pm.collectionVariables.set('trackingId', pm.response.json().tracking_id);"]}}]
+    },
+    {
+      "name":"Get shipment", "request":{
+        "method":"GET","header":[{"key":"Authorization","value":"Bearer {{accessToken}}"}],
+        "url":"{{baseUrl}}/v1/shipments/{{trackingId}}"
+      },
+      "event":[{"listen":"test","script":{"type":"text/javascript","exec":["pm.test('Shipment found', () => pm.response.to.have.status(200));"]}}]
+    }
+  ]
+}

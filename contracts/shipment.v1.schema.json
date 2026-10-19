@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/parcelguard/shipment.v1.schema.json",
+  "title": "ParcelGuard Shipment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["tracking_id", "customer_email", "destination", "service_level", "status", "version", "created_at", "updated_at"],
+  "properties": {
+    "tracking_id": {"type": "string", "pattern": "^PG-[0-9]{6,}$"},
+    "customer_email": {"type": "string", "enum": ["ana@parcelguard.local", "bruno@parcelguard.local"]},
+    "destination": {"type": "string", "minLength": 8, "maxLength": 180},
+    "service_level": {"type": "string", "enum": ["STANDARD", "EXPRESS"]},
+    "status": {"type": "string", "enum": ["CREATED", "PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED"]},
+    "version": {"type": "integer", "minimum": 0},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}
